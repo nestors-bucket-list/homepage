@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wanderlist — Explore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F9F4E9;
+    --grid:#DFE6EC;
+    --ink:#2F2B24;
+    --ink-soft:#746A5B;
+    --coral:#E2603E;
+    --coral-dark:#C74E2F;
+    --green:#5C8A5C;
+    --yellow:#EFE6CD;
+    --pink:#EBDDDD;
+    --blue:#DAE3E4;
+    --mint:#DCE2D6;
+    --card-cream:#FFFDF6;
+    --shadow: 0 10px 24px -12px rgba(47,43,36,0.35), 0 2px 6px -2px rgba(47,43,36,0.15);
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:26px 26px;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    color:var(--ink);
+    padding:28px 20px 90px;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  /* ---------- Header ---------- */
+  header{
+    text-align:center;
+    margin-bottom:28px;
+  }
+  h1{
+    font-family:'Caveat',cursive;
+    font-weight:700;
+    font-size:clamp(46px,7vw,66px);
+    margin:0;
+    color:var(--ink);
+    transform:rotate(-1deg);
+    line-height:1;
+  }
+  .underline{display:block;width:230px;height:14px;margin:2px auto 8px;}
+  .tagline{
+    font-family:'Caveat',cursive;
+    font-size:20px;
+    color:var(--ink-soft);
+    margin:0 0 4px;
+  }
+  .stat-line{font-size:13px; color:var(--ink-soft); margin:0;}
+
+  /* ---------- Controls ---------- */
+  .controls{
+    max-width:640px; margin:26px auto 34px;
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+  }
+  .search-box{
+    width:100%; position:relative;
+  }
+  .search-box input{
+    width:100%; border:1.5px solid #E4DCC9; border-radius:999px; padding:12px 18px 12px 42px;
+    font-family:'Inter',sans-serif; font-size:14.5px; background:var(--card-cream); color:var(--ink);
+    box-shadow:var(--shadow);
+  }
+  .search-box input:focus{outline:2px solid var(--coral); outline-offset:1px; border-color:var(--coral);}
+  .search-box svg{position:absolute; left:15px; top:50%; transform:translateY(-50%); color:var(--ink-soft);}
+
+  .filters{display:flex; flex-wrap:wrap; justify-content:center; gap:8px;}
+  .filter-pill{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:12.5px;
+    padding:7px 15px; border-radius:999px; border:1.5px solid #E4DCC9;
+    background:var(--card-cream); color:var(--ink-soft); cursor:pointer;
+    transition:all .15s ease;
+  }
+  .filter-pill:hover{border-color:var(--coral);}
+  .filter-pill.active{background:var(--coral); border-color:var(--coral); color:#fff;}
+
+  /* ---------- Country grid ---------- */
+  .grid{
+    columns:4 250px;
+    column-gap:20px;
+  }
+  @media (max-width:900px){ .grid{columns:2 250px;} }
+  @media (max-width:520px){ .grid{columns:1 250px;} }
+
+  .card{
+    break-inside:avoid;
+    margin:0 0 20px;
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    padding:16px 16px 14px;
+    position:relative;
+    transition:transform .18s ease;
+  }
+  .card:hover{transform:translateY(-3px);}
+  .card.r0{transform:rotate(-1.3deg);} .card.r0:hover{transform:rotate(-1.3deg) translateY(-3px);}
+  .card.r1{transform:rotate(0.9deg);}  .card.r1:hover{transform:rotate(0.9deg) translateY(-3px);}
+  .card.r2{transform:rotate(-0.5deg);} .card.r2:hover{transform:rotate(-0.5deg) translateY(-3px);}
+  .card.r3{transform:rotate(1.4deg);}  .card.r3:hover{transform:rotate(1.4deg) translateY(-3px);}
+
+  .card.sticky-yellow{background:var(--yellow);}
+  .card.sticky-pink{background:var(--pink);}
+  .card.sticky-blue{background:var(--blue);}
+  .card.sticky-mint{background:var(--mint);}
+
+  .pin{
+    position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+    width:15px; height:15px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff, var(--coral) 60%, var(--coral-dark));
+    box-shadow:0 3px 5px rgba(0,0,0,0.3);
+  }
+
+  .card-head{display:flex; align-items:center; gap:8px; margin:5px 0 10px;}
+  .flag{font-size:22px; line-height:1;}
+  .card h3{
+    font-family:'Caveat',cursive; font-size:23px; font-weight:700;
+    margin:0; line-height:1;
+  }
+
+  .cities{display:flex; flex-wrap:wrap; gap:6px;}
+  .city-link{
+    display:inline-flex; align-items:center;
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    color:var(--ink); background:rgba(255,255,255,0.6);
+    padding:5px 10px; border-radius:999px; text-decoration:none;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .city-link:hover{background:#fff; transform:translateY(-1px);}
+  .city-link.country-link{
+    background:var(--coral); color:#fff; font-weight:700;
+    flex-basis:100%; margin-bottom:3px;
+  }
+  .city-link.country-link:hover{background:var(--coral-dark);}
+
+  .no-results{
+    text-align:center; font-family:'Caveat',cursive; font-size:20px;
+    color:var(--ink-soft); margin-top:50px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Wanderlist</h1>
+    <svg class="underline" viewBox="0 0 230 14" fill="none">
+      <path d="M2 8 C 60 2, 120 14, 180 6 C 195 4, 205 8, 215 5" stroke="#E2603E" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 9"/>
+      <path d="M212 2 L221 5 L213 9" stroke="#E2603E" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <p class="tagline">Where to next?</p>
+    <p class="stat-line" id="stat-line">50 countries · 250 cities to start a list for</p>
+  </header>
+
+  <div class="controls">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="search" placeholder="Search a country or city…">
+    </div>
+    <div class="filters" id="filters"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="no-results" id="no-results" style="display:none;">No places match that search — try another spelling ✈️</p>
+</div>
+
+<script>
+(function(){
+  const DATA = [
+    {country:'Italy', flag:'🇮🇹', continent:'Europe', cities:['Rome','Milan','Venice','Florence','Naples']},
+    {country:'France', flag:'🇫🇷', continent:'Europe', cities:['Paris','Nice','Lyon','Marseille','Bordeaux']},
+    {country:'Spain', flag:'🇪🇸', continent:'Europe', cities:['Madrid','Barcelona','Seville','Valencia','Granada']},
+    {country:'Germany', flag:'🇩🇪', continent:'Europe', cities:['Berlin','Munich','Hamburg','Cologne','Frankfurt']},
+    {country:'United Kingdom', flag:'🇬🇧', continent:'Europe', cities:['London','Edinburgh','Manchester','Liverpool','Oxford']},
+    {country:'Portugal', flag:'🇵🇹', continent:'Europe', cities:['Lisbon','Porto','Faro','Sintra','Coimbra']},
+    {country:'Greece', flag:'🇬🇷', continent:'Europe', cities:['Athens','Santorini','Mykonos','Thessaloniki','Heraklion']},
+    {country:'Netherlands', flag:'🇳🇱', continent:'Europe', cities:['Amsterdam','Rotterdam','Utrecht','The Hague','Maastricht']},
+    {country:'Switzerland', flag:'🇨🇭', continent:'Europe', cities:['Zurich','Geneva','Lucerne','Bern','Interlaken']},
+    {country:'Austria', flag:'🇦🇹', continent:'Europe', cities:['Vienna','Salzburg','Innsbruck','Graz','Hallstatt']},
+    {country:'Czech Republic', flag:'🇨🇿', continent:'Europe', cities:['Prague','Brno','Český Krumlov','Karlovy Vary','Plzeň']},
+    {country:'Croatia', flag:'🇭🇷', continent:'Europe', cities:['Dubrovnik','Split','Zagreb','Zadar','Hvar']},
+    {country:'Ireland', flag:'🇮🇪', continent:'Europe', cities:['Dublin','Galway','Cork','Killarney','Limerick']},
+    {country:'Iceland', flag:'🇮🇸', continent:'Europe', cities:['Reykjavik','Akureyri','Vík','Húsavík','Selfoss']},
+    {country:'Norway', flag:'🇳🇴', continent:'Europe', cities:['Oslo','Bergen','Tromsø','Ålesund','Stavanger']},
+    {country:'Sweden', flag:'🇸🇪', continent:'Europe', cities:['Stockholm','Gothenburg','Malmö','Uppsala','Kiruna']},
+    {country:'Denmark', flag:'🇩🇰', continent:'Europe', cities:['Copenhagen','Aarhus','Odense','Aalborg','Skagen']},
+    {country:'Finland', flag:'🇫🇮', continent:'Europe', cities:['Helsinki','Rovaniemi','Tampere','Turku','Oulu']},
+    {country:'Poland', flag:'🇵🇱', continent:'Europe', cities:['Warsaw','Krakow','Gdansk','Wroclaw','Poznan']},
+    {country:'Hungary', flag:'🇭🇺', continent:'Europe', cities:['Budapest','Debrecen','Szeged','Eger','Pécs']},
+    {country:'Turkey', flag:'🇹🇷', continent:'Asia', cities:['Istanbul','Cappadocia','Antalya','Izmir','Bodrum']},
+    {country:'United Arab Emirates', flag:'🇦🇪', continent:'Asia', cities:['Dubai','Abu Dhabi','Sharjah','Al Ain','Ras Al Khaimah']},
+    {country:'Israel', flag:'🇮🇱', continent:'Asia', cities:['Jerusalem','Tel Aviv','Haifa','Eilat','Nazareth']},
+    {country:'Japan', flag:'🇯🇵', continent:'Asia', cities:['Tokyo','Kyoto','Osaka','Hiroshima','Sapporo']},
+    {country:'China', flag:'🇨🇳', continent:'Asia', cities:['Beijing','Shanghai',"Xi'an",'Chengdu','Guilin']},
+    {country:'South Korea', flag:'🇰🇷', continent:'Asia', cities:['Seoul','Busan','Jeju City','Incheon','Gyeongju']},
+    {country:'Thailand', flag:'🇹🇭', continent:'Asia', cities:['Bangkok','Chiang Mai','Phuket','Krabi','Pattaya']},
+    {country:'Vietnam', flag:'🇻🇳', continent:'Asia', cities:['Hanoi','Ho Chi Minh City','Da Nang','Hoi An','Ha Long']},
+    {country:'Indonesia', flag:'🇮🇩', continent:'Asia', cities:['Bali','Jakarta','Yogyakarta','Ubud','Lombok']},
+    {country:'India', flag:'🇮🇳', continent:'Asia', cities:['Delhi','Mumbai','Jaipur','Agra','Goa']},
+    {country:'Nepal', flag:'🇳🇵', continent:'Asia', cities:['Kathmandu','Pokhara','Chitwan','Lumbini','Namche Bazaar']},
+    {country:'Philippines', flag:'🇵🇭', continent:'Asia', cities:['Manila','Cebu','Palawan','Boracay','Davao']},
+    {country:'Malaysia', flag:'🇲🇾', continent:'Asia', cities:['Kuala Lumpur','Penang','Malacca','Langkawi','Kota Kinabalu']},
+    {country:'Georgia', flag:'🇬🇪', continent:'Asia', cities:['Tbilisi','Batumi','Kutaisi','Mtskheta','Kazbegi']},
+    {country:'Morocco', flag:'🇲🇦', continent:'Africa', cities:['Marrakech','Casablanca','Fez','Chefchaouen','Essaouira']},
+    {country:'Egypt', flag:'🇪🇬', continent:'Africa', cities:['Cairo','Luxor','Aswan','Alexandria','Hurghada']},
+    {country:'South Africa', flag:'🇿🇦', continent:'Africa', cities:['Cape Town','Johannesburg','Durban','Pretoria','Stellenbosch']},
+    {country:'Kenya', flag:'🇰🇪', continent:'Africa', cities:['Nairobi','Mombasa','Nakuru','Kisumu','Malindi']},
+    {country:'United States', flag:'🇺🇸', continent:'Americas', cities:['New York','Los Angeles','San Francisco','Las Vegas','Chicago']},
+    {country:'Canada', flag:'🇨🇦', continent:'Americas', cities:['Toronto','Vancouver','Montreal','Quebec City','Banff']},
+    {country:'Mexico', flag:'🇲🇽', continent:'Americas', cities:['Mexico City','Cancún','Tulum','Oaxaca','Guadalajara']},
+    {country:'Brazil', flag:'🇧🇷', continent:'Americas', cities:['Rio de Janeiro','São Paulo','Salvador','Florianópolis','Brasília']},
+    {country:'Argentina', flag:'🇦🇷', continent:'Americas', cities:['Buenos Aires','Mendoza','Bariloche','Córdoba','Ushuaia']},
+    {country:'Peru', flag:'🇵🇪', continent:'Americas', cities:['Lima','Cusco','Arequipa','Aguas Calientes','Iquitos']},
+    {country:'Chile', flag:'🇨🇱', continent:'Americas', cities:['Santiago','Valparaíso','San Pedro de Atacama','Punta Arenas','Puerto Varas']},
+    {country:'Colombia', flag:'🇨🇴', continent:'Americas', cities:['Bogotá','Cartagena','Medellín','Cali','Santa Marta']},
+    {country:'Costa Rica', flag:'🇨🇷', continent:'Americas', cities:['San José','La Fortuna','Manuel Antonio','Monteverde','Tamarindo']},
+    {country:'Cuba', flag:'🇨🇺', continent:'Americas', cities:['Havana','Trinidad','Varadero','Santiago de Cuba','Viñales']},
+    {country:'Australia', flag:'🇦🇺', continent:'Oceania', cities:['Sydney','Melbourne','Brisbane','Cairns','Perth']},
+    {country:'New Zealand', flag:'🇳🇿', continent:'Oceania', cities:['Auckland','Queenstown','Wellington','Rotorua','Christchurch']},
+    {country:'Russia', flag:'🇷🇺', continent:'Europe', cities:['Moscow','Saint Petersburg','Kazan','Sochi','Yekaterinburg']},
+    {country:'Saudi Arabia', flag:'🇸🇦', continent:'Asia', cities:['Riyadh','Jeddah','Mecca','Medina','AlUla']},
+    {country:'Belgium', flag:'🇧🇪', continent:'Europe', cities:['Brussels','Bruges','Ghent','Antwerp','Liège']},
+    {country:'Dominican Republic', flag:'🇩🇴', continent:'Americas', cities:['Santo Domingo','Punta Cana','Puerto Plata','La Romana','Samaná']},
+    {country:'Bulgaria', flag:'🇧🇬', continent:'Europe', cities:['Sofia','Plovdiv','Varna','Bansko','Veliko Tarnovo']},
+    {country:'Romania', flag:'🇷🇴', continent:'Europe', cities:['Bucharest','Brașov','Sibiu','Cluj-Napoca','Sighișoara']},
+    {country:'Slovenia', flag:'🇸🇮', continent:'Europe', cities:['Ljubljana','Bled','Piran','Maribor','Bohinj']},
+    {country:'Tunisia', flag:'🇹🇳', continent:'Africa', cities:['Tunis','Sousse','Hammamet','Djerba','Sidi Bou Said']},
+    {country:'Sri Lanka', flag:'🇱🇰', continent:'Asia', cities:['Colombo','Kandy','Galle','Ella','Sigiriya']},
+    {country:'Jordan', flag:'🇯🇴', continent:'Asia', cities:['Amman','Petra','Aqaba','Wadi Rum','Jerash']},
+  ];
+
+  const stickyVariants = ['sticky-yellow','sticky-pink','sticky-blue','sticky-mint'];
+  const continents = ['All','Europe','Asia','Africa','Americas','Oceania'];
+  let activeContinent = 'All';
+
+  const grid = document.getElementById('grid');
+  const searchInput = document.getElementById('search');
+  const filtersEl = document.getElementById('filters');
+  const noResults = document.getElementById('no-results');
+  const statLine = document.getElementById('stat-line');
+
+  const totalCities = DATA.reduce((sum, c) => sum + c.cities.length, 0);
+  statLine.textContent = `${DATA.length} countries · ${totalCities} cities — plus a whole-country list for each`;
+
+  filtersEl.innerHTML = continents.map(c =>
+    `<button class="filter-pill ${c === 'All' ? 'active' : ''}" data-continent="${c}">${c}</button>`
+  ).join('');
+
+  filtersEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-pill');
+    if(!btn) return;
+    activeContinent = btn.dataset.continent;
+    [...filtersEl.children].forEach(el => el.classList.toggle('active', el === btn));
+    render();
+  });
+
+  searchInput.addEventListener('input', render);
+
+  function esc(s){
+    return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  const SITE_BASE = 'https://nestors-bucket-list.github.io/homepage';
+  const STATIC_PAGES = new Set([
+    'italy/italy','italy/rome','italy/milan','italy/venice','italy/florence','italy/naples',
+    'philippines/philippines','philippines/manila','philippines/cebu','philippines/palawan','philippines/boracay','philippines/davao',
+  ]);
+
+  function slugify(s){
+    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  }
+
+  function cityUrl(country, city){
+    const key = slugify(country) + '/' + slugify(city);
+    if(STATIC_PAGES.has(key)) return `${SITE_BASE}/${key}.html`;
+    return `wanderlist.html?country=${encodeURIComponent(country)}&city=${encodeURIComponent(city)}`;
+  }
+  function countryUrl(country){
+    return cityUrl(country, country);
+  }
+
+  function render(){
+    const q = searchInput.value.trim().toLowerCase();
+    const filtered = DATA.filter(entry => {
+      const matchesContinent = activeContinent === 'All' || entry.continent === activeContinent;
+      if(!matchesContinent) return false;
+      if(!q) return true;
+      if(entry.country.toLowerCase().includes(q)) return true;
+      return entry.cities.some(c => c.toLowerCase().includes(q));
+    });
+
+    if(!filtered.length){
+      grid.innerHTML = '';
+      noResults.style.display = 'block';
+      return;
+    }
+    noResults.style.display = 'none';
+
+    grid.innerHTML = filtered.map((entry, i) => {
+      const rot = 'r' + (i % 4);
+      const variant = stickyVariants[i % stickyVariants.length];
+      const countryLink = `<a class="city-link country-link" href="${countryUrl(entry.country)}">🌍 Whole ${esc(entry.country)}</a>`;
+      const cityLinks = entry.cities
+        .filter(c => !q || entry.country.toLowerCase().includes(q) || c.toLowerCase().includes(q))
+        .map(c => `<a class="city-link" href="${cityUrl(entry.country, c)}">${esc(c)}</a>`)
+        .join('');
+      return `
+      <div class="card ${rot} ${variant}">
+        <div class="pin"></div>
+        <div class="card-head">
+          <span class="flag">${entry.flag}</span>
+          <h3>${esc(entry.country)}</h3>
+        </div>
+        <div class="cities">${countryLink}${cityLinks}</div>
+      </div>`;
+    }).join('');
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
