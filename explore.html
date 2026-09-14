@@ -291,10 +291,22 @@
     'croatia/croatia','croatia/dubrovnik','croatia/split','croatia/zagreb','croatia/zadar','croatia/hvar',
     'ireland/ireland','ireland/dublin','ireland/galway','ireland/cork','ireland/killarney','ireland/limerick',
     'iceland/iceland','iceland/reykjavik','iceland/akureyri',
+    'iceland/vik','iceland/husavik','iceland/selfoss',
+    'norway/norway','norway/oslo','norway/bergen','norway/tromso','norway/alesund','norway/stavanger',
+    'sweden/sweden','sweden/stockholm','sweden/gothenburg','sweden/malmo','sweden/uppsala','sweden/kiruna',
+    'denmark/denmark','denmark/copenhagen','denmark/aarhus','denmark/odense','denmark/aalborg','denmark/skagen',
+    'finland/finland','finland/helsinki','finland/rovaniemi','finland/tampere','finland/turku','finland/oulu',
+    'poland/poland','poland/warsaw','poland/krakow','poland/gdansk','poland/wroclaw','poland/poznan',
+    'hungary/hungary','hungary/budapest','hungary/debrecen','hungary/szeged','hungary/eger','hungary/pecs',
+    'turkey/turkey','turkey/istanbul','turkey/cappadocia','turkey/antalya','turkey/izmir','turkey/bodrum',
+    'united-arab-emirates/united-arab-emirates','united-arab-emirates/dubai','united-arab-emirates/abu-dhabi','united-arab-emirates/sharjah','united-arab-emirates/al-ain',
   ]);
 
   function slugify(s){
-    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    const manual = {'ø':'o','æ':'ae','œ':'oe','ß':'ss','ð':'d','þ':'th','ł':'l','đ':'d'};
+    let out = (s || '').toLowerCase();
+    out = out.replace(/[øæœßðþłđ]/g, c => manual[c]);
+    return out.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
       .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
   }
 
