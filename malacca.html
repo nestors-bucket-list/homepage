@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wanderlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F9F4E9;
+    --grid:#DFE6EC;
+    --ink:#2F2B24;
+    --ink-soft:#746A5B;
+    --coral:#E2603E;
+    --coral-dark:#C74E2F;
+    --green:#5C8A5C;
+    --yellow:#EFE6CD;
+    --pink:#EBDDDD;
+    --blue:#DAE3E4;
+    --mint:#DCE2D6;
+    --card-cream:#FFFDF6;
+    --shadow: 0 10px 24px -12px rgba(47,43,36,0.35), 0 2px 6px -2px rgba(47,43,36,0.15);
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:26px 26px;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    color:var(--ink);
+    padding:28px 20px 90px;
+  }
+
+  .wrap{max-width:1080px;margin:0 auto;}
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:22px;
+    margin-bottom:34px;
+  }
+  .title-block{position:relative;}
+  .back-link{
+    display:none; align-items:center; gap:4px;
+    font-size:12.5px; font-weight:600; color:var(--ink-soft);
+    text-decoration:none; margin-bottom:8px;
+  }
+  .back-link:hover{color:var(--coral);}
+  h1{
+    font-family:'Caveat',cursive;
+    font-weight:700;
+    font-size:clamp(44px,7vw,66px);
+    margin:0 0 2px -2px;
+    color:var(--ink);
+    transform:rotate(-1.2deg);
+    line-height:1;
+  }
+  .underline{display:block;width:230px;max-width:60vw;height:14px;margin-top:2px;}
+  .tagline{
+    font-family:'Caveat',cursive;
+    font-size:19px;
+    color:var(--ink-soft);
+    margin:6px 0 0 2px;
+    transform:rotate(-0.6deg);
+  }
+
+  .progress-box{
+    background:var(--card-cream);
+    border-radius:14px;
+    padding:14px 18px;
+    box-shadow:var(--shadow);
+    min-width:250px;
+    transform:rotate(0.8deg);
+    position:relative;
+  }
+  .progress-box::before{
+    content:"";
+    position:absolute; top:-9px; left:22px;
+    width:52px; height:18px;
+    background:repeating-linear-gradient(45deg, rgba(226,96,62,0.55) 0 6px, rgba(226,96,62,0.35) 6px 12px);
+    border-radius:2px;
+    transform:rotate(-3deg);
+    box-shadow:0 2px 4px rgba(0,0,0,0.15);
+  }
+  .progress-label{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:13px; color:var(--ink-soft); margin-bottom:8px; font-weight:500;
+  }
+  .progress-label strong{color:var(--ink); font-size:15px;}
+  .progress-track{
+    height:8px; border-radius:6px; background:#EFE7D6; overflow:hidden;
+    box-shadow:inset 0 1px 2px rgba(0,0,0,0.12);
+  }
+  .progress-fill{
+    height:100%; background:linear-gradient(90deg,var(--coral),var(--coral-dark));
+    border-radius:6px; transition:width .5s cubic-bezier(.4,0,.2,1);
+  }
+
+  .add-btn{
+    display:inline-flex; align-items:center; gap:7px;
+    background:var(--coral); color:#fff; border:none;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:14.5px;
+    padding:11px 18px; border-radius:999px; cursor:pointer;
+    box-shadow:0 6px 16px -6px rgba(226,96,62,0.6);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .add-btn:hover{transform:translateY(-1px); box-shadow:0 8px 18px -6px rgba(226,96,62,0.7);}
+  .add-btn:active{transform:translateY(0px) scale(.97);}
+  .add-row{display:flex; justify-content:flex-end; margin:-8px 0 26px;}
+  .add-row #explore-link{margin:0 auto 0 0;}
+
+  /* ---------- Grid of cards ---------- */
+  .grid{
+    columns:3 260px;
+    column-gap:22px;
+  }
+  @media (max-width:720px){ .grid{columns:1 260px;} }
+
+  .card{
+    break-inside:avoid;
+    margin:0 0 22px;
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    padding:18px 18px 16px;
+    position:relative;
+    transition:transform .18s ease;
+  }
+  .card:hover{transform:translateY(-3px);}
+  .card.r0{transform:rotate(-1.4deg);} .card.r0:hover{transform:rotate(-1.4deg) translateY(-3px);}
+  .card.r1{transform:rotate(1deg);}    .card.r1:hover{transform:rotate(1deg) translateY(-3px);}
+  .card.r2{transform:rotate(-0.6deg);} .card.r2:hover{transform:rotate(-0.6deg) translateY(-3px);}
+  .card.r3{transform:rotate(1.6deg);}  .card.r3:hover{transform:rotate(1.6deg) translateY(-3px);}
+  .card.r4{transform:rotate(-1.9deg);} .card.r4:hover{transform:rotate(-1.9deg) translateY(-3px);}
+  .card.r5{transform:rotate(0.4deg);}  .card.r5:hover{transform:rotate(0.4deg) translateY(-3px);}
+
+  .card.sticky-yellow{background:var(--yellow);}
+  .card.sticky-pink{background:var(--pink);}
+  .card.sticky-blue{background:var(--blue);}
+  .card.sticky-mint{background:var(--mint);}
+
+  .pin{
+    position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+    width:16px; height:16px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff, var(--coral) 60%, var(--coral-dark));
+    box-shadow:0 3px 5px rgba(0,0,0,0.3);
+  }
+
+  .card h3{
+    font-family:'Caveat',cursive; font-size:25px; font-weight:700;
+    margin:6px 0 4px; line-height:1.2;
+  }
+  .tag{
+    display:inline-block; font-size:11.5px; font-weight:600; color:var(--ink-soft);
+    background:rgba(255,255,255,0.55); padding:3px 9px; border-radius:999px; margin-bottom:9px;
+  }
+  .note{font-size:14px; line-height:1.5; color:var(--ink); margin:0 0 14px;}
+
+  .photo-required{
+    display:flex; align-items:center; gap:6px;
+    font-size:12px; color:var(--ink-soft); font-weight:500; margin-bottom:12px;
+  }
+
+  .photo-frame{
+    background:#fff; padding:8px 8px 30px; border-radius:4px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.18);
+    margin-bottom:12px; position:relative;
+  }
+  .photo-frame img{width:100%; display:block; border-radius:2px; aspect-ratio:4/3; object-fit:cover;}
+  .stamp{
+    position:absolute; bottom:4px; right:8px;
+    font-family:'Caveat',cursive; font-weight:700; font-size:15px;
+    color:var(--green); border:2px solid var(--green); border-radius:6px;
+    padding:2px 8px; transform:rotate(-8deg); opacity:0.85;
+    letter-spacing:0.5px;
+  }
+  .tape-corner{
+    position:absolute; width:34px; height:14px; background:rgba(255,255,255,0.65);
+    box-shadow:0 1px 2px rgba(0,0,0,0.1);
+  }
+  .tape-corner.tl{top:-6px; left:-8px; transform:rotate(-40deg);}
+  .tape-corner.br{bottom:-6px; right:-8px; transform:rotate(-40deg);}
+
+  .card-footer{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .status-text{font-size:12.5px; color:var(--ink-soft); font-weight:500;}
+  .status-text.done{color:var(--green); font-weight:600;}
+
+  .check-btn{
+    width:34px; height:34px; border-radius:50%; border:2px solid var(--ink);
+    background:rgba(255,255,255,0.5); cursor:pointer; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .15s ease, background .2s ease, border-color .2s ease;
+  }
+  .check-btn svg{width:16px; height:16px; opacity:0; transition:opacity .15s ease;}
+  .check-btn:hover{transform:scale(1.07);}
+  .check-btn.done{background:var(--green); border-color:var(--green);}
+  .check-btn.done svg{opacity:1;}
+  .check-btn.pop{animation:pop .38s ease;}
+  @keyframes pop{ 0%{transform:scale(1);} 45%{transform:scale(1.28);} 100%{transform:scale(1);} }
+
+  .card.completed .note, .card.completed h3{opacity:0.85;}
+
+  .empty-state{
+    background:var(--card-cream); border-radius:12px; padding:40px 26px;
+    text-align:center; box-shadow:var(--shadow); max-width:420px; margin:30px auto;
+    transform:rotate(-0.8deg);
+  }
+  .empty-state p{font-family:'Caveat',cursive; font-size:22px; color:var(--ink-soft); margin:0;}
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(47,43,36,0.45);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:50;
+  }
+  .overlay.open{opacity:1; pointer-events:auto;}
+  .modal{
+    background:var(--card-cream); border-radius:16px; padding:26px 26px 22px;
+    width:100%; max-width:400px; box-shadow:0 24px 60px -20px rgba(0,0,0,0.5);
+    transform:translateY(14px) scale(.97); transition:transform .22s ease;
+  }
+  .overlay.open .modal{transform:translateY(0) scale(1);}
+  .modal h2{font-family:'Caveat',cursive; font-size:30px; margin:0 0 4px;}
+  .modal p.sub{font-size:13px; color:var(--ink-soft); margin:0 0 18px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:5px;}
+  .field input[type=text], .field textarea{
+    width:100%; border:1.5px solid #E4DCC9; border-radius:9px; padding:10px 11px;
+    font-family:'Inter',sans-serif; font-size:14px; background:#fff; color:var(--ink);
+    resize:vertical;
+  }
+  .field input:focus, .field textarea:focus{outline:2px solid var(--coral); outline-offset:1px; border-color:var(--coral);}
+  .switch-row{display:flex; align-items:center; justify-content:space-between; margin:18px 0 22px;}
+  .switch-row .label-text{font-size:14px; font-weight:500;}
+  .switch-row .label-sub{font-size:12px; color:var(--ink-soft); margin-top:1px;}
+  .switch{width:46px; height:27px; border-radius:999px; background:#DCD3BE; position:relative; cursor:pointer; border:none; flex-shrink:0; transition:background .2s ease;}
+  .switch.on{background:var(--green);}
+  .switch::after{content:""; position:absolute; top:2.5px; left:2.5px; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.3); transition:left .2s ease;}
+  .switch.on::after{left:21.5px;}
+  .modal-actions{display:flex; gap:10px; justify-content:flex-end;}
+  .btn-secondary{background:none; border:none; color:var(--ink-soft); font-weight:600; font-size:14px; padding:10px 14px; cursor:pointer; border-radius:8px;}
+  .btn-secondary:hover{background:#F0E9D8;}
+  .btn-primary{background:var(--coral); color:#fff; border:none; font-weight:600; font-size:14px; padding:10px 18px; border-radius:999px; cursor:pointer;}
+  .btn-primary:disabled{opacity:.5; cursor:not-allowed;}
+
+  /* ---------- Toast ---------- */
+  #toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:#fff; padding:13px 22px; border-radius:12px;
+    font-family:'Caveat',cursive; font-size:19px; box-shadow:0 10px 24px rgba(0,0,0,0.3);
+    opacity:0; pointer-events:none; transition:all .3s cubic-bezier(.4,0,.2,1); z-index:60;
+    max-width:90vw; text-align:center;
+  }
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  #confetti-layer{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:70;}
+  .confetti-piece{position:absolute; top:-14px; border-radius:2px; opacity:0.95;}
+
+  /* ---------- Leaderboard ---------- */
+  .leaderboard-card{
+    background:var(--card-cream);
+    border-radius:14px;
+    padding:22px 24px 20px;
+    box-shadow:var(--shadow);
+    margin-top:36px;
+    max-width:560px;
+    margin-left:auto; margin-right:auto;
+    transform:rotate(-0.5deg);
+    position:relative;
+  }
+  .leaderboard-card::before{
+    content:"";
+    position:absolute; top:-9px; left:50%; transform:translateX(-50%) rotate(-2deg);
+    width:60px; height:18px;
+    background:repeating-linear-gradient(45deg, rgba(92,138,92,0.5) 0 6px, rgba(92,138,92,0.32) 6px 12px);
+    border-radius:2px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.15);
+  }
+  .lb-top{text-align:center; margin-bottom:16px;}
+  .lb-top h2{font-family:'Caveat',cursive; font-size:28px; font-weight:700; margin:0 0 4px;}
+  .lb-sub{font-size:12.5px; color:var(--ink-soft); margin:0; line-height:1.5;}
+
+  .lb-join{display:flex; gap:8px; margin-bottom:16px;}
+  .lb-join input{
+    flex:1; border:1.5px solid #E4DCC9; border-radius:9px; padding:9px 11px;
+    font-family:'Inter',sans-serif; font-size:14px; background:#fff; color:var(--ink);
+  }
+  .lb-join input:focus{outline:2px solid var(--coral); outline-offset:1px; border-color:var(--coral);}
+  .lb-join .btn-primary{padding:9px 16px;}
+
+  .lb-note{text-align:center; font-size:12.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .lb-note strong{color:var(--ink);}
+
+  .lb-loading{text-align:center; font-size:13px; color:var(--ink-soft); margin:10px 0;}
+
+  .lb-row{
+    display:flex; align-items:center; gap:10px;
+    padding:9px 8px; border-bottom:1px dashed #E4DCC9;
+  }
+  .lb-row:last-child{border-bottom:none;}
+  .lb-row.me{background:rgba(226,96,62,0.08); border-radius:8px; border-bottom-color:transparent;}
+  .lb-rank{font-family:'Caveat',cursive; font-weight:700; font-size:19px; color:var(--ink-soft); width:22px; text-align:center; flex-shrink:0;}
+  .lb-row:first-child .lb-rank{color:var(--coral);}
+  .lb-name{font-size:13.5px; font-weight:600; color:var(--ink); flex:0 0 auto; min-width:80px; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .lb-name em{font-style:normal; color:var(--coral); font-weight:500;}
+  .lb-bar-wrap{flex:1; height:6px; border-radius:6px; background:#EFE7D6; overflow:hidden; box-shadow:inset 0 1px 2px rgba(0,0,0,0.1);}
+  .lb-bar{display:block; height:100%; background:linear-gradient(90deg,var(--coral),var(--coral-dark)); border-radius:6px;}
+  .lb-count{font-size:12px; color:var(--ink-soft); font-weight:600; width:48px; text-align:right; flex-shrink:0;}
+
+  footer{text-align:center; margin-top:44px;}
+  .reset-link{background:none; border:none; color:var(--ink-soft); font-size:12px; text-decoration:underline; cursor:pointer; opacity:0.7;}
+  .reset-link:hover{opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="title-block">
+      <a href="../explore.html" id="back-link" class="back-link" style="display:none;">← All countries</a>
+      <h1>Wanderlist</h1>
+      <svg class="underline" viewBox="0 0 230 14" fill="none">
+        <path d="M2 8 C 60 2, 120 14, 180 6 C 195 4, 205 8, 215 5" stroke="#E2603E" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 9"/>
+        <path d="M212 2 L221 5 L213 9" stroke="#E2603E" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <p class="tagline">collect the world, one trip at a time ✈️</p>
+    </div>
+    <div class="progress-box">
+      <div class="progress-label"><span>stamped so far</span><strong id="progress-count">0 / 0</strong></div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+  </header>
+
+  <div class="add-row">
+    <a href="../explore.html" id="explore-link" class="back-link" style="display:none; margin:0;">🌍 Explore countries</a>
+    <button class="add-btn" id="open-modal-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Add a place
+    </button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <section class="leaderboard-card">
+    <div class="lb-top">
+      <h2>Leaderboard</h2>
+      <p class="lb-sub">See how your friends are stamping their way through their own lists. Your name and stamp count are visible to everyone here.</p>
+    </div>
+    <div id="lb-join" class="lb-join">
+      <input type="text" id="lb-name-input" maxlength="20" placeholder="Your name">
+      <button id="lb-join-btn" class="btn-primary">Join</button>
+    </div>
+    <p class="lb-note" id="lb-note" style="display:none;">Playing as <strong id="lb-me"></strong> · <button class="reset-link" id="lb-change-btn">change name</button></p>
+    <div id="lb-list" class="lb-list"><p class="lb-loading">loading friends…</p></div>
+  </section>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2>New destination</h2>
+    <p class="sub">What's calling you next?</p>
+    <form id="add-form">
+      <div class="field">
+        <label for="f-name">Place</label>
+        <input type="text" id="f-name" maxlength="60" placeholder="e.g. Watch sunrise over Angkor Wat" required>
+      </div>
+      <div class="field">
+        <label for="f-location">Location</label>
+        <input type="text" id="f-location" maxlength="40" placeholder="e.g. Siem Reap, Cambodia" required>
+      </div>
+      <div class="field">
+        <label for="f-note">Why you want to go</label>
+        <textarea id="f-note" rows="2" maxlength="140" placeholder="A short note to future you"></textarea>
+      </div>
+      <div class="switch-row">
+        <div>
+          <div class="label-text">Require a photo</div>
+          <div class="label-sub">Snap proof to check this one off</div>
+        </div>
+        <button type="button" class="switch" id="photo-switch"></button>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="cancel-btn">Cancel</button>
+        <button type="submit" class="btn-primary">Add to list</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="confetti-layer"></div>
+
+<footer>
+  <button class="reset-link" id="reset-btn">clear my whole list</button>
+</footer>
+
+<script>
+(function(){
+  const cityParam = 'Malacca';
+  const countryParam = 'Malaysia';
+  function slugify(s){
+    const manual = {'ø':'o','æ':'ae','œ':'oe','ß':'ss','ð':'d','þ':'th','ł':'l','đ':'d'};
+    let out = (s || '').toLowerCase();
+    out = out.replace(/[øæœßðþłđ]/g, c => manual[c]);
+    return out.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  }
+  const listSlug = cityParam ? slugify(cityParam + (countryParam ? '-' + countryParam : '')) : '';
+
+  const STORAGE_KEY = 'wanderlist-items' + (listSlug ? ':' + listSlug : '');
+  const USERNAME_KEY = 'wanderlist-username';
+  const LB_PREFIX = 'leaderboard:' + (listSlug ? listSlug + ':' : '');
+  const stickyVariants = ['sticky-yellow','sticky-pink','sticky-blue','sticky-mint'];
+  let items = [];
+  let requirePhotoOn = false;
+  let username = null;
+
+  const grid = document.getElementById('grid');
+  const overlay = document.getElementById('overlay');
+  const form = document.getElementById('add-form');
+  const photoSwitch = document.getElementById('photo-switch');
+  const toast = document.getElementById('toast');
+  const confettiLayer = document.getElementById('confetti-layer');
+  const shownMilestones = new Set();
+
+  const defaultItems = () => ([
+    {id:cid(), name:'Watch sunrise over Angkor Wat', location:'Siem Reap, Cambodia', note:'Before the crowds arrive — just me, the moat, and the light.', requiresPhoto:true, done:false, photo:null, doneDate:null},
+    {id:cid(), name:'Get lost in the Kyoto bamboo grove', location:'Arashiyama, Japan', note:'The way the light falls through, apparently, is unreal.', requiresPhoto:true, done:false, photo:null, doneDate:null},
+    {id:cid(), name:'Eat pastel de nata still warm', location:'Lisbon, Portugal', note:'From the bakery everyone keeps telling me about.', requiresPhoto:false, done:false, photo:null, doneDate:null},
+    {id:cid(), name:'Chase the northern lights', location:'Tromsø, Norway', note:'Bring the warm socks. All of them.', requiresPhoto:true, done:false, photo:null, doneDate:null},
+    {id:cid(), name:'Sleep under Sahara stars', location:'Merzouga, Morocco', note:'No wifi, no light pollution, no excuses.', requiresPhoto:false, done:false, photo:null, doneDate:null},
+    {id:cid(), name:'Ride the Trans-Siberian, one leg of it', location:'Irkutsk to Lake Baikal', note:'Just a few days. See how it feels.', requiresPhoto:false, done:false, photo:null, doneDate:null},
+  ]);
+
+  function cid(){ return 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2,8); }
+
+  async function loadItems(){
+    grid.innerHTML = '<div class="empty-state"><p>unpacking your list…</p></div>';
+    try{
+      const res = await window.storage.get(STORAGE_KEY, false);
+      items = res && res.value ? JSON.parse(res.value) : (cityParam ? [] : defaultItems());
+    }catch(e){
+      items = cityParam ? [] : defaultItems();
+    }
+    render();
+  }
+
+  async function saveItems(){
+    try{
+      await window.storage.set(STORAGE_KEY, JSON.stringify(items), false);
+    }catch(e){ console.error('Could not save list', e); }
+    syncLeaderboard();
+  }
+
+  // ---------- Leaderboard ----------
+  async function loadUsername(){
+    try{
+      const res = await window.storage.get(USERNAME_KEY, false);
+      username = res && res.value ? res.value : null;
+    }catch(e){ username = null; }
+    updateJoinUI();
+  }
+
+  function updateJoinUI(){
+    const joinBox = document.getElementById('lb-join');
+    const note = document.getElementById('lb-note');
+    if(username){
+      joinBox.style.display = 'none';
+      note.style.display = 'block';
+      document.getElementById('lb-me').textContent = username;
+    }else{
+      joinBox.style.display = 'flex';
+      note.style.display = 'none';
+    }
+  }
+
+  async function syncLeaderboard(){
+    if(!username) return;
+    const done = items.filter(i => i.done).length;
+    const total = items.length;
+    try{
+      await window.storage.set(LB_PREFIX + username, JSON.stringify({name:username, count:done, total, updatedAt:Date.now()}), true);
+    }catch(e){ console.error('Could not sync leaderboard', e); }
+    loadLeaderboard();
+  }
+
+  async function loadLeaderboard(){
+    const listEl = document.getElementById('lb-list');
+    try{
+      const res = await window.storage.list(LB_PREFIX, true);
+      const keys = res && res.keys ? res.keys : [];
+      const entries = await Promise.all(keys.map(async k => {
+        try{
+          const r = await window.storage.get(k, true);
+          return r && r.value ? JSON.parse(r.value) : null;
+        }catch(e){ return null; }
+      }));
+      const valid = entries.filter(Boolean).sort((a,b) => b.count - a.count);
+      renderLeaderboard(valid);
+    }catch(e){
+      listEl.innerHTML = '<p class="lb-loading">Couldn\'t load the leaderboard right now.</p>';
+    }
+  }
+
+  function renderLeaderboard(entries){
+    const listEl = document.getElementById('lb-list');
+    if(!entries.length){
+      listEl.innerHTML = '<p class="lb-loading">No friends have joined yet — be the first stamp. ✨</p>';
+      return;
+    }
+    listEl.innerHTML = entries.map((e, i) => {
+      const pct = e.total ? Math.round((e.count / e.total) * 100) : 0;
+      const isMe = username && e.name === username;
+      return `
+      <div class="lb-row ${isMe ? 'me' : ''}">
+        <span class="lb-rank">${i + 1}</span>
+        <span class="lb-name">${esc(e.name)}${isMe ? ' <em>(you)</em>' : ''}</span>
+        <span class="lb-bar-wrap"><span class="lb-bar" style="width:${pct}%"></span></span>
+        <span class="lb-count">${e.count}/${e.total}</span>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('lb-join-btn').addEventListener('click', async () => {
+    const val = document.getElementById('lb-name-input').value.trim();
+    if(!val) return;
+    username = val.slice(0, 20);
+    try{ await window.storage.set(USERNAME_KEY, username, false); }catch(e){}
+    updateJoinUI();
+    syncLeaderboard();
+  });
+
+  document.getElementById('lb-name-input').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') document.getElementById('lb-join-btn').click();
+  });
+
+  document.getElementById('lb-change-btn').addEventListener('click', async () => {
+    username = null;
+    try{ await window.storage.delete(USERNAME_KEY, false); }catch(e){}
+    updateJoinUI();
+    loadLeaderboard();
+  });
+
+  function render(){
+    if(!items.length){
+      grid.innerHTML = `<div class="empty-state"><p>${cityParam ? `Start your ${esc(cityParam)} list — add your first spot. ✨` : 'Your list is empty — add your first dream to chase. ✨'}</p></div>`;
+      updateProgress();
+      return;
+    }
+    grid.innerHTML = items.map((item, i) => renderCard(item, i)).join('');
+    updateProgress();
+  }
+
+  function renderCard(item, i){
+    const rot = 'r' + (i % 6);
+    const done = item.done;
+    if(item.requiresPhoto && done && item.photo){
+      return `
+      <div class="card ${rot} completed" data-id="${item.id}">
+        <div class="pin"></div>
+        <h3>${esc(item.name)}</h3>
+        <span class="tag">${esc(item.location)}</span>
+        <div class="photo-frame">
+          <div class="tape-corner tl"></div>
+          <img src="${item.photo}" alt="${esc(item.name)}">
+          <div class="stamp">VISITED</div>
+        </div>
+        <p class="note">${esc(item.note || '')}</p>
+        <div class="card-footer">
+          <span class="status-text done">Checked off ${item.doneDate ? '· ' + item.doneDate : ''}</span>
+          ${checkBtn(item, true)}
+        </div>
+      </div>`;
+    }
+    const variant = stickyVariants[i % stickyVariants.length];
+    return `
+    <div class="card ${rot} ${variant} ${done ? 'completed' : ''}" data-id="${item.id}">
+      <div class="pin"></div>
+      <h3>${esc(item.name)}</h3>
+      <span class="tag">${esc(item.location)}</span>
+      ${item.requiresPhoto && !done ? `<div class="photo-required">${cameraIcon()} needs a photo to complete</div>` : ''}
+      <p class="note">${esc(item.note || '')}</p>
+      <div class="card-footer">
+        <span class="status-text ${done ? 'done' : ''}">${done ? 'Checked off' + (item.doneDate ? ' · ' + item.doneDate : '') : 'Tap to check off'}</span>
+        ${checkBtn(item, done)}
+      </div>
+      ${item.requiresPhoto ? `<input type="file" accept="image/*" capture="environment" class="hidden-file-input" data-id="${item.id}" style="display:none;">` : ''}
+    </div>`;
+  }
+
+  function checkBtn(item, done){
+    return `<button class="check-btn ${done ? 'done' : ''}" data-id="${item.id}" aria-label="${done ? 'Mark not visited' : 'Mark visited'}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>
+    </button>`;
+  }
+
+  function cameraIcon(){
+    return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
+  }
+
+  function esc(s){
+    return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function updateProgress(){
+    const total = items.length;
+    const done = items.filter(i => i.done).length;
+    document.getElementById('progress-count').textContent = `${done} / ${total}`;
+    document.getElementById('progress-fill').style.width = total ? `${(done/total)*100}%` : '0%';
+  }
+
+  // ---------- interactions ----------
+  grid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.check-btn');
+    if(btn){ handleToggle(btn.dataset.id, btn); return; }
+  });
+
+  grid.addEventListener('change', (e) => {
+    if(e.target.classList.contains('hidden-file-input')){
+      const id = e.target.dataset.id;
+      const file = e.target.files[0];
+      if(file) handlePhoto(id, file);
+    }
+  });
+
+  function handleToggle(id, btnEl){
+    const item = items.find(i => i.id === id);
+    if(!item) return;
+
+    if(item.done){
+      item.done = false;
+      item.doneDate = null;
+      saveItems(); render();
+      return;
+    }
+
+    if(item.requiresPhoto && !item.photo){
+      const input = document.querySelector(`.hidden-file-input[data-id="${id}"]`);
+      if(input) input.click();
+      return;
+    }
+
+    completeItem(item);
+  }
+
+  function handlePhoto(id, file){
+    const item = items.find(i => i.id === id);
+    if(!item) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      item.photo = reader.result;
+      completeItem(item);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function completeItem(item){
+    item.done = true;
+    item.doneDate = new Date().toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
+    saveItems();
+    render();
+    fireConfetti();
+    const cardEl = document.querySelector(`.card[data-id="${item.id}"] .check-btn`);
+    if(cardEl) cardEl.classList.add('pop');
+    checkMilestone();
+  }
+
+  function checkMilestone(){
+    const done = items.filter(i => i.done).length;
+    const total = items.length;
+    let msg = null;
+    if(done === 1 && !shownMilestones.has(1)){ msg = 'First stamp in the passport! ✈️'; shownMilestones.add(1); }
+    else if(done === 3 && !shownMilestones.has(3)){ msg = "You're on a roll — three adventures logged! 🌍"; shownMilestones.add(3); }
+    else if(done === total && total >= 2 && !shownMilestones.has('all')){ msg = 'The whole list, stamped. Time to add more. 🎉'; shownMilestones.add('all'); }
+    else { msg = pickCelebration(); }
+    showToast(msg);
+  }
+
+  const celebrations = ['Nice one! 🎉','Adventure logged. 📌','One more for the scrapbook. 📷','Look at you go! ✨'];
+  function pickCelebration(){ return celebrations[Math.floor(Math.random()*celebrations.length)]; }
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toast.classList.remove('show'), 2600);
+  }
+
+  function fireConfetti(){
+    const colors = ['#E2603E','#F6D877','#A7CEDD','#B6D7AE','#F2B9C6'];
+    for(let i=0;i<28;i++){
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      const size = 6 + Math.random()*6;
+      el.style.width = size + 'px';
+      el.style.height = (size*0.5) + 'px';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.left = (45 + Math.random()*10) + 'vw';
+      const dx = (Math.random()-0.5) * 300;
+      const dy = 260 + Math.random()*260;
+      const rot = Math.random()*720 - 360;
+      el.style.transform = 'translate(0,0) rotate(0deg)';
+      el.style.transition = `transform ${1 + Math.random()*0.8}s cubic-bezier(.2,.6,.3,1), opacity ${1 + Math.random()*0.8}s ease`;
+      confettiLayer.appendChild(el);
+      requestAnimationFrame(() => {
+        el.style.transform = `translate(${dx}px, ${dy}px) rotate(${rot}deg)`;
+        el.style.opacity = '0';
+      });
+      setTimeout(() => el.remove(), 2200);
+    }
+  }
+
+  // ---------- Add-place modal ----------
+  document.getElementById('open-modal-btn').addEventListener('click', () => openModal());
+  document.getElementById('cancel-btn').addEventListener('click', () => closeModal());
+  overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+  photoSwitch.addEventListener('click', () => {
+    requirePhotoOn = !requirePhotoOn;
+    photoSwitch.classList.toggle('on', requirePhotoOn);
+  });
+
+  function openModal(){
+    form.reset();
+    requirePhotoOn = false;
+    photoSwitch.classList.remove('on');
+    overlay.classList.add('open');
+    setTimeout(() => document.getElementById('f-name').focus(), 150);
+  }
+  function closeModal(){ overlay.classList.remove('open'); }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('f-name').value.trim();
+    const location = document.getElementById('f-location').value.trim();
+    const note = document.getElementById('f-note').value.trim();
+    if(!name || !location) return;
+    items.unshift({id:cid(), name, location, note, requiresPhoto:requirePhotoOn, done:false, photo:null, doneDate:null});
+    saveItems();
+    render();
+    closeModal();
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', async () => {
+    if(!confirm('Clear your whole bucket list? This can\'t be undone.')) return;
+    items = [];
+    await saveItems();
+    render();
+  });
+
+  if(cityParam){
+    document.title = cityParam + ' Bucket List';
+    document.querySelector('h1').textContent = cityParam;
+    document.querySelector('.tagline').textContent = (countryParam && countryParam !== cityParam) ? `Your ${cityParam}, ${countryParam} bucket list.` : `Your ${cityParam} bucket list.`;
+    const backLink = document.getElementById('back-link');
+    if(backLink) backLink.style.display = 'inline-flex';
+    const lbSub = document.querySelector('.lb-sub');
+    if(lbSub) lbSub.textContent = `See how your friends are doing on ${cityParam}. Your name and stamp count are visible to everyone here.`;
+  }else{
+    const exploreLink = document.getElementById('explore-link');
+    if(exploreLink) exploreLink.style.display = 'inline-flex';
+  }
+
+  loadItems();
+  loadUsername();
+  loadLeaderboard();
+})();
+</script>
+</body>
+</html>
