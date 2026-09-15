@@ -319,12 +319,33 @@
     'kenya/kenya','kenya/nairobi','kenya/mombasa','kenya/nakuru','kenya/kisumu','kenya/malindi',
     'united-states/united-states','united-states/new-york','united-states/los-angeles','united-states/san-francisco','united-states/las-vegas','united-states/chicago',
     'canada/canada','canada/toronto','canada/vancouver','canada/montreal',
+    'nepal/kathmandu','canada/quebec-city','canada/banff','mexico/mexico','mexico/mexico-city','mexico/cancun',
+    'mexico/tulum','mexico/oaxaca','mexico/guadalajara','brazil/brazil','brazil/rio-de-janeiro','brazil/sao-paulo',
+    'brazil/salvador','brazil/florianopolis','brazil/brasilia','argentina/argentina','argentina/buenos-aires','argentina/mendoza',
+    'argentina/bariloche','argentina/cordoba','argentina/ushuaia','peru/peru','peru/lima','peru/cusco',
+    'peru/arequipa','peru/aguas-calientes','peru/iquitos','chile/chile','chile/santiago','chile/valparaiso',
+    'chile/san-pedro-de-atacama','chile/punta-arenas','chile/puerto-varas','colombia/colombia','colombia/bogota','colombia/cartagena',
+    'colombia/medellin','colombia/cali','colombia/santa-marta','costa-rica/costa-rica','costa-rica/san-jose','costa-rica/la-fortuna',
+    'costa-rica/manuel-antonio','costa-rica/monteverde','costa-rica/tamarindo','cuba/cuba','cuba/havana','cuba/trinidad',
+    'cuba/varadero','cuba/santiago-de-cuba','cuba/vinales','australia/australia','australia/sydney','australia/melbourne',
+    'australia/brisbane','australia/cairns','australia/perth','new-zealand/new-zealand','new-zealand/auckland','new-zealand/queenstown',
+    'new-zealand/wellington','new-zealand/rotorua','new-zealand/christchurch','russia/russia','russia/moscow','russia/saint-petersburg',
+    'russia/kazan','russia/sochi','russia/yekaterinburg','saudi-arabia/saudi-arabia','saudi-arabia/riyadh','saudi-arabia/jeddah',
+    'saudi-arabia/mecca','saudi-arabia/medina','saudi-arabia/alula','belgium/belgium','belgium/brussels','belgium/bruges',
+    'belgium/ghent','belgium/antwerp','belgium/liege','dominican-republic/dominican-republic','dominican-republic/santo-domingo','dominican-republic/punta-cana',
+    'dominican-republic/puerto-plata','dominican-republic/la-romana','dominican-republic/samana','bulgaria/bulgaria','bulgaria/sofia','bulgaria/plovdiv',
+    'bulgaria/varna','bulgaria/bansko','bulgaria/veliko-tarnovo','romania/romania','romania/bucharest','romania/brasov',
+    'romania/sibiu','romania/cluj-napoca','romania/sighisoara','slovenia/slovenia','slovenia/ljubljana','slovenia/bled',
+    'slovenia/piran','slovenia/maribor','slovenia/bohinj','tunisia/tunisia','tunisia/tunis','tunisia/sousse',
+    'tunisia/hammamet','tunisia/djerba','tunisia/sidi-bou-said','sri-lanka/sri-lanka','sri-lanka/colombo','sri-lanka/kandy',
+    'sri-lanka/galle','sri-lanka/ella','sri-lanka/sigiriya','jordan/jordan','jordan/amman','jordan/petra',
+    'jordan/aqaba','jordan/wadi-rum','jordan/jerash',
   ]);
 
   function slugify(s){
-    const manual = {'ø':'o','æ':'ae','œ':'oe','ß':'ss','ð':'d','þ':'th','ł':'l','đ':'d'};
+    const manual = {'ø':'o','æ':'ae','œ':'oe','ß':'ss','ð':'d','þ':'th','ł':'l','đ':'d','ș':'s','ț':'t','ş':'s','ţ':'t'};
     let out = (s || '').toLowerCase();
-    out = out.replace(/[øæœßðþłđ]/g, c => manual[c]);
+    out = out.replace(/[øæœßðþłđșțşţ]/g, c => manual[c]);
     return out.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
       .replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
   }
